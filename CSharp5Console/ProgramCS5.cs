@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CSharp6Console
+namespace CSharp5Console
 {
-    class Program
+    class ProgramCS5
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello C# 6");
+            //Console.WriteLine(( 1, 2, 3, 4, 5)); //tuples Only in CS7
         }
     }
 }
