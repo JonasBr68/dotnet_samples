@@ -7,6 +7,7 @@ using static System.String;
 using static CSharp6Console.MyStatics;
 using static System.Linq.Enumerable; // TODO CS6 3.3 Observe that using System.Linq not specified, this imports it
 
+
 // TODO CS6 3.1 using static to allow calling Assert(...)
 using static System.Diagnostics.Debug;
 
@@ -83,10 +84,15 @@ namespace CSharp6Console
                 { "Lessie", "Crosby" }, // Different extension method
             };
 
+            //Enumerable.Select 
+
+            //classList.Select()
+
             // TODO CS6 9.1 Index Initializers using custom indexer to allow using index initializer
             var classList2 = new Enrollment()
             {
                 [0] = new Student("First", "Zero")
+                //[2] = new Student("First", "Zero")
             };
         }
     }
@@ -133,7 +139,7 @@ namespace CSharp6Console
         public void ChangeLastName(string newLastName)
         {
             // TODO CS6 1.5 Generates CS0200: Property or indexer cannot be assigned to -- it is read only
-            // LastName = newLastName; //Immutable
+            //LastName = newLastName; //Immutable
         }
 
         
@@ -173,7 +179,7 @@ namespace CSharp6Console
         public override string ToString() => $"{LastName}, {FirstName}"; // TODO CS6 5.0 interpolated strings
 
         // TODO CS6 2.1 read-only property with expression body 
-        public string FullName => $"{LastName}, {FirstName}"; // TODO CS6 5.1 interpolated strings
+        public string FullName  => $"{LastName}, {FirstName}"; // TODO CS6 5.1 interpolated strings
 
 
         // TODO CS6 5.3 interpolated string with format specifier and method call
@@ -191,6 +197,9 @@ namespace CSharp6Console
         public EventHandler Quitting { get; set; }
         public void Leave()
         {
+            //var handler = Quitting;
+            //if (handler != null)
+            //    handler(this, null);
             // TODO CS6 4.2 Null-conditional operator only call method/event handler when not null
             Quitting?.Invoke(this, null);
         }
@@ -279,6 +288,10 @@ namespace CSharp6Console
             // TODO CS6 4.1 Null-conditional operator with [] (index) operator
             var firstName = names?[0]; //Only calls operator [] if names is not null
 
+            //int? t = null;
+
+            //t ? ++;
+
             // TODO CS6 3.4 Calling System.Diagnostics.Debug.Assert directly thanks to 'using static'
             Assert(name == null); 
 
@@ -302,9 +315,11 @@ namespace CSharp6Console
         }
         static void FormattableStrings()
         {
-            FormattableString fStr2 = $"Now2 {DateTime.Now}"; // TODO CS6 5.4 Interpolated strings compiles to FormattableString if you want
+            FormattableString fStr2 = $"Now2 {DateTime.Now:m}"; // TODO CS6 5.4 Interpolated strings compiles to FormattableString if you want
             Console.WriteLine(fStr2.Format);
             Console.WriteLine(fStr2);
+
+            Console.WriteLine(fStr2.ToString(CultureInfo.CreateSpecificCulture("es-es")));
 
             // TODO CS6 5.5 Interpolated strings/FormattableString can be used and reused with different cultures
             Console.WriteLine(fStr2.ToString(CultureInfo.CreateSpecificCulture("en-us")));
@@ -315,6 +330,7 @@ namespace CSharp6Console
             Console.WriteLine(fStr);
             Console.WriteLine(fStr.ToString(CultureInfo.CreateSpecificCulture("en-us")));
             Console.WriteLine(fStr.ToString(CultureInfo.CreateSpecificCulture("es-es")));
+
 
 
             //Console.WriteLine(string.Format("Missing arg {0}")); // System.FormatException
@@ -350,7 +366,7 @@ namespace CSharp6Console
             {
                 throw;
             }
-            catch (Exception ex) when (!!System.Diagnostics.Debugger.IsAttached) // TODO CS6 6.4 Depending on debugger attached or not
+            catch (Exception ex) when (System.Diagnostics.Debugger.IsAttached) // TODO CS6 6.4 Depending on debugger attached or not
             {
                 Console.WriteLine("EXCEPTION NOT THROWN: " + ex.ToString());
             }
@@ -398,7 +414,7 @@ namespace CSharp6Console
         }
         static Task<Uri> AsyncHttpClientExceptionFiltering(string requestedUrl)
         {
-            if (string.IsNullOrEmpty(requestedUrl))
+            if (IsNullOrEmpty(requestedUrl))
             {
                 // TODO CS6 7.2 nameof turns variable into its name as string, allows safe renaming/refactoring
                 throw new ArgumentNullException(nameof(requestedUrl));
@@ -423,7 +439,7 @@ namespace CSharp6Console
                     response = await client.SendAsync(request);
                     //var stringResponse = await client.GetStringAsync(requestedUrl); //Silly to use as it looses the HttpResponseMessage with the status code
 
-                    response.EnsureSuccessStatusCode();
+                    //response.EnsureSuccessStatusCode();
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
                         if (response.StatusCode == HttpStatusCode.MovedPermanently ||

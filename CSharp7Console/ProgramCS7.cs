@@ -116,22 +116,22 @@ namespace CSharp7Console
     class Area
     {
         // TODO CS70 7.0 Expression bodied constructor, deconstructing tuple straight into member variables
-        internal Area(in (int x, int y, int width, int height) areaTuple) => (X, Y, Width, Height) = 
-                                                                            (areaTuple.x,
-                                                                            areaTuple.y,
-                                                                            areaTuple.width,
-                                                                            areaTuple.height);
+        internal Area(in (int x, int y, int width, int height) areaTuple) => (X, Y, Width, Height) = areaTuple;
+                                                                            //(areaTuple.x,
+                                                                            //areaTuple.y,
+                                                                            //areaTuple.width,
+                                                                            //areaTuple.height);
 
         // TODO CS70 7.1 Expression-bodied finalizer
         ~Area() => Console.Error.WriteLine("Finalized!");
 
-        internal Area(int x, int y, int width, int height)
-        {
-            X = x;
-            Y = y;
-            Width = width;
-            Height = height;
-        }
+        internal Area(int x, int y, int width, int height) => (X, Y, Width, Height) = (x, y, width, height);
+        //{
+        //    X = x;
+        //    Y = y;
+        //    Width = width;
+        //    Height = height;
+        //}
         int X { get; } = 0;
         int Y { get; } = 0;
 
@@ -196,11 +196,13 @@ namespace CSharp7Console
 
 
             // TODO CS70 1.0 out variable declarations, in situ visible in current scope
-            if (int.TryParse(input, out var result))
-                WriteLine(result);
-            else
-                WriteLine("Could not parse input" + result);
-
+            {
+                if (int.TryParse(input, out var result))
+                    WriteLine(result);
+                else
+                    WriteLine("Could not parse input" + result);
+            }
+            //WriteLine(result);
         }
 
 
@@ -211,7 +213,8 @@ namespace CSharp7Console
         //https://github.com/dotnet/csharplang/issues/189 ("let" and "from")
         //https://github.com/dotnet/csharplang/issues/258 ("lambda")
 
-        // TODO CS70 2.1 Returns a ValueTuple<string,string,int> and aliased members Item1 = name, Item2 = sirname and Item3 = age
+        // TODO CS70 2.1 Returns a ValueTuple<string,string,int> and aliased members 
+        // Item1 = name, Item2 = sirname and Item3 = age
         static (string name, string sirname, int age) GetPerson(int id)
         {
             return ("Jonas" + id, "Brandel" + id, 50 + id);
@@ -393,7 +396,11 @@ namespace CSharp7Console
 
             // TODO CS70 2.8.2 Nested tuples with named fields
             var t2 = MakeNested();
-            WriteLine((t2.a, t2.b.a, t2.b.b.a, t2.b.b.b.a, t2.b.b.b.b));
+            WriteLine(( t2.a, 
+                        t2.b.a, 
+                        t2.b.b.a, 
+                        t2.b.b.b.a, 
+                        t2.b.b.b.b));
 
             // TODO CS70 2.8.3 Deconstructing and discard of nested tuples with named fields
             (_, (_, (_, (int a, int b)))) = t2;
@@ -484,7 +491,7 @@ namespace CSharp7Console
             (_, _, _, _, _, _, _, int eight, _, _) = tuple10Values2;
 
             // TODO CS70 2.9.05 This with a nested tuple does not compile, altough intuitively one would expect so
-            //ValueTuple<int, int, int, int, int, int, int, ValueTuple<int, int, int>> t8e2 = (1, 2, 3, 4, 5, 6, 7, (8, 9, 10));
+            // ValueTuple<int, int, int, int, int, int, int, ValueTuple<int, int, int>> t8e2 = (1, 2, 3, 4, 5, 6, 7, (8, 9, 10));
 
             // TODO CS70 2.9.06 When structure is really nested, the compiler wraps the nested tuple in a single ValueTuple
             ValueTuple<int, int, int, int, int, int, int, ValueTuple<ValueTuple<int, int, int>>> tuple10Values3Nested = (1, 2, 3, 4, 5, 6, 7, (8, 9, 10));
@@ -567,13 +574,14 @@ namespace CSharp7Console
             var area2 = new Area(1, 1, 300, 200);
 
             //Calling deconstructor like a normal method
+            //var (w) = area2;
             area2.Deconstruct(out var width2); // TODO CS70 1.1 out variable declared in situ
             WriteLine(width2);
 
 
             // TODO CS70 2.6.7 Trick to convert from type to tuple if has Deconstructor
             (int x, int y, int width, int height) f = (_, _, _, _) = area2; 
-            WriteLine(f);
+            WriteLine(f.height);
 
             //(int x, int y, int width, int height) f2 = (int a, int b, int c, int d) = area2; //Does not compile ?
 
@@ -618,7 +626,8 @@ namespace CSharp7Console
         public const long BillionsAndBillions = 100_000_000_000;
 
         // TODO CS70 9.4 Digit separator with double, decimal and float
-        public const double AvogadroConstant = 6.022_140_857_747_474e23;
+        public const float AvogadroConstantFloat = 6.022_140_857_747_474e23f;
+        public const double AvogadroConstant = 6.022_140_857_747_474e23d;
         public const decimal GoldenRatio = 1.618_033_988_749_894_848_204_586_834_365_638_117_720_309_179M;
 
         static void Main(string[] args)

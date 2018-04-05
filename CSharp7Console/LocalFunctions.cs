@@ -56,6 +56,12 @@ namespace CSharp7Console
             {
                 await Task.Yield();
                 WriteLine(msg);
+                //Otra();
+                //return;
+                //void Otra()
+                //{
+                //    WriteLine("NestedNested");
+                //}
             }
         }
 

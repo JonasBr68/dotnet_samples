@@ -59,7 +59,8 @@ namespace CSharp7Console
             {
                 GetRefAt(i) = GetRefAt(i) - 1;
             }
-            SamplesInt[0] = -1;
+            GetRefAt(0) = -1;
+            WriteLine(SamplesInt[0]);
 
             foreach(int v in SamplesInt)
             {
