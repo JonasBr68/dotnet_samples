@@ -34,8 +34,8 @@ namespace CSharp7Async
         static async Task Main(string[] args)
         {
             bool enableJavaSCriptInPage = false;
-            bool useAsyncPump = false;
-            AsyncModel mode = AsyncModel.Select;
+            bool useAsyncPump = true;
+            AsyncModel mode = AsyncModel.AsyncFor;
             if (useAsyncPump)
             {
                 AsyncPump.Run(async delegate

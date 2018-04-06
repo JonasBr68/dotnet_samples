@@ -15,10 +15,27 @@ namespace CSharp72DLL
         {
             WriteLine(nameof(this.OnlyForTrustedDerivedClasses));
         }
+        virtual internal protected void InternalProtected()
+        {
 
+        }
+        virtual protected void Protected()
+        {
+
+        }
         virtual public void ForEveryOne()
         {
             WriteLine(nameof(this.ForEveryOne));
+        }
+    }
+
+    class Test
+    {
+        Test()
+        {
+            var bp = new BasePrivateProtected();
+            bp.InternalProtected();
+            
         }
     }
 
@@ -28,5 +45,6 @@ namespace CSharp72DLL
         {
             base.OnlyForTrustedDerivedClasses();
         }
+        
     }
 }

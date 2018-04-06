@@ -13,7 +13,11 @@ namespace CSharp7Console
         {
             // TODO CS72 4.2 private protected not visible from other assembly (exception use InternalsVisibleTo)
             // error CS0122: 'BaseA.OnlyForTrustedDerivedClasses()' is inaccessible due to its protection level
-            // base.OnlyForTrustedDerivedClasses();
+             //base.OnlyForTrustedDerivedClasses();
+        }
+        protected override void InternalProtected()
+        {
+            base.InternalProtected();
         }
     }
 }

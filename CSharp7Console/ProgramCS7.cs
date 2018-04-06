@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-
+using CSharp72DLL;
 using static System.Console;
 using static System.Int32;
 
@@ -633,6 +633,9 @@ namespace CSharp7Console
         static void Main(string[] args)
         {
 
+            DerivedProtectedPrivate tc = new DerivedProtectedPrivate();
+            BasePrivateProtected bpp = new BasePrivateProtected();
+            
             OutVariables();
 
             DeconstructionAndTuples();
@@ -703,6 +706,8 @@ namespace CSharp7Console
 
             var myNonNullTuple = myTuple ?? default((int id, string name)?);
             WriteLine(myNonNullTuple?.name);
+
+            var myNonNullTuple2 = myTuple ?? default;
 
             int? nullableInt = null;
 
