@@ -683,6 +683,30 @@ namespace CSharp7Console
 
             //C# 7.2
             RefValueTypes.RefReadOnly();
+
+
+            NullableTypesAndDefault();
+        }
+
+        private static void NullableTypesAndDefault()
+        {
+            (int id, string name)? myTuple = null;
+
+            var myNonNullTuple = myTuple ?? default((int id, string name)?);
+            WriteLine(myNonNullTuple?.name);
+
+            int? nullableInt = null;
+
+            var nonNullInt = nullableInt ?? default(int?);
+            nonNullInt = null;
+
+            var nonNullInt2 = nullableInt ?? default(int);
+            //nonNullInt2 = null; //error CS0037: Cannot convert null to 'int' because it is a non-nullable value type
+
+            var nonNullInt3 = nullableInt ?? default; //null coalescing with new default literal resolves var to its non-the nullabel type
+
+            //nonNullInt3 = null; //error CS0037: Cannot convert null to 'int' because it is a non-nullable value type
+
         }
     }
 }

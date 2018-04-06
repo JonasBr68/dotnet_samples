@@ -23,16 +23,17 @@ namespace CSharp7Async
     }
     class Program
     {
-        //static string sitemap = "https://www.aplitop.com/sitemap/pages";
-        static string sitemap = "https://www.pagelr.com/sitemap.xml";
+        static string sitemap = "https://www.aplitop.com/sitemap/pages";
+        //static string sitemap = "https://www.pagelr.com/sitemap.xml";
         //static string sitemap = "http://growthsupply.com/page-sitemap.xml";
 
         //static string[] urls = new string[] {"www.aplitop.com" };
 
+
         // TODO CS71 1.0 Async Main
         static async Task Main(string[] args)
         {
-            bool enableJavaSCriptInPage = true;
+            bool enableJavaSCriptInPage = false;
             bool useAsyncPump = false;
             AsyncModel mode = AsyncModel.Select;
             if (useAsyncPump)
