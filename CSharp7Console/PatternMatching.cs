@@ -80,7 +80,7 @@ namespace CSharp7Console
             if (obj is var tupleObj && tupleObj.GetType() == typeof((int, string))) 
             //if (obj.GetType() == typeof((int, string))) <- Enough with this no?
             {
-                WriteLine((((int _, string str))tupleObj).str); //Casting tuple/ValueTuple - unboxing conversion
+                WriteLine((((int _, string str))tupleObj)._); //Casting tuple/ValueTuple - unboxing conversion
 
                 //(((int id, string str))to).str = "tuple2"; error CS0445: Cannot modify the result of an unboxing conversion
 
@@ -95,7 +95,7 @@ namespace CSharp7Console
                 temp.str = "tuple2";
 
 
-                WriteLine((((int _, string str))tupleObj).str); //idStrTuple
+                WriteLine((((int, string str))tupleObj).str); //idStrTuple
 
                 WriteLine(temp2.str); //idStrTuple
 
