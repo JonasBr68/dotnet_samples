@@ -4,8 +4,12 @@ using System.Dynamic;
 
 namespace DynamicConfusion
 {
+    /// <summary>
+    /// For details about this see http://www.impostorprogrammer.com/articles/csharp/dangers-with-dynamic.html
+    /// </summary>
     class Program
     {
+
         static public string MakeString(dynamic dyn)
         {
             return dyn.str;
