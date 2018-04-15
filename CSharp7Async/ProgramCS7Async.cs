@@ -29,25 +29,120 @@ namespace CSharp7Async
 
         //static string[] urls = new string[] {"www.aplitop.com" };
 
+        static int counter = 0;
+        static int toProcess = 0;
 
+        static bool useJavascript = false;
         // TODO CS71 1.0 Async Main
         static async Task Main(string[] args)
         {
-            bool enableJavaSCriptInPage = false;
-            bool useAsyncPump = true;
-            AsyncModel mode = AsyncModel.AsyncFor;
-            if (useAsyncPump)
+            ThreadPool.SetMaxThreads(1, 1); // Does not work, minimum is available CPU cores
+            bool useSingleThreadedContext = false;
+            bool showDanger = true;
+            AsyncModel mode = AsyncModel.Select;
+            if (showDanger)
             {
-                AsyncPump.Run(async delegate
+                if (useSingleThreadedContext)
                 {
-                    await DemoAsync(mode, enableJavaSCriptInPage);
-                });
+                    AsyncPump.Run(async delegate
+                    {
+                        await DemoDangerAsync(mode);
+                    });
+                }
+                else
+                    await DemoDangerAsync(mode);
+
             }
             else
-                await DemoAsync(mode, enableJavaSCriptInPage);
+            {
+                if (useSingleThreadedContext)
+                {
+                    AsyncPump.Run(async delegate
+                    {
+                        await DemoAsync(mode);
+                    });
+                }
+                else
+                    await DemoAsync(mode);
+            }
         }
 
-        private static async Task DemoAsync(AsyncModel mode, bool useJavascript)
+        private static async Task DemoDangerAsync(AsyncModel mode)
+        {
+            WriteLine($"Entered {nameof(DemoDangerAsync)} on thread {Thread.CurrentThread.ManagedThreadId} in Mode: {mode.ToString()}");
+            Stopwatch sw = Stopwatch.StartNew();
+
+            toProcess = 10_000;
+            WriteLine($"About to process {toProcess} async items");
+            List<Task> allTasks = new List<Task>();
+            switch (mode)
+            {
+                case AsyncModel.SimpleFor:
+                    {
+                        for (int i = 0; i < toProcess; i++)
+                        {
+                            await DoAsync(i);
+                        }
+                        break;
+                    }
+                case AsyncModel.AsyncFor:
+                    {
+                        for (int i = 0; i < toProcess; i++)
+                        {
+                            Func<Task> at = async () =>
+                            {
+                                await DoAsync(i);
+                            };
+
+                            allTasks.Add(at());
+                        }
+                        await Task.WhenAll(allTasks);
+                        break;
+                    }
+                case AsyncModel.Parallel_For:
+                    {
+
+                        Parallel.For(0, toProcess, i =>
+                        {
+                            //allTasks.Add(Task.Factory.StartNew(async () =>
+                            //{
+                            //    await GetScreenShotAsync(i, client, sitemap_urls);
+                            //}).Unwrap());
+                            Func<Task> at = async () =>
+                        {
+                            await DoAsync(i);
+                        };
+                            allTasks.Add(at());
+                        }
+                        );
+
+                        await Task.WhenAll(allTasks);
+                        break;
+                    }
+                case AsyncModel.Select:
+                    {
+                        await Task.WhenAll(Enumerable.Range(0, toProcess).Select(async (i) => await DoAsync(i)));
+                        break;
+                    }
+            }
+
+
+            sw.Stop();
+            WriteLine($"Counted to {counter} out of {toProcess} {(counter == toProcess ? "CORRECT" : "BAD BAD BAD")}");
+            WriteLine($"Finishing async Main on thread {Thread.CurrentThread.ManagedThreadId} Duration {(sw.ElapsedMilliseconds / 1000f):F2} seconds ({sw.ElapsedMilliseconds} ms)");
+        }
+
+
+        private static async Task DoAsync(int i)
+        {
+            await Task.Delay(1);
+            counter++;
+            if(counter % 100 == 0)
+                WriteLine($"Completed {nameof(DoAsync)} {i} counter={counter} on thread {Thread.CurrentThread.ManagedThreadId}");
+        }
+
+
+        private static async Task DemoAsync(AsyncModel mode)
         {
             WriteLine($"Entered async Main on thread {Thread.CurrentThread.ManagedThreadId} in Mode: {mode.ToString()}");
             RemoveScreenShots();
@@ -56,7 +151,8 @@ namespace CSharp7Async
             {
 
                 string[] sitemap_urls = await GetSiteMapUrls(client, sitemap);
-                
+                toProcess = sitemap_urls.Length;
+                WriteLine($"About to process {sitemap_urls.Length} screenshots");
                 List<Task> allTasks = new List<Task>();
                 switch (mode)
                 {
@@ -87,12 +183,12 @@ namespace CSharp7Async
 
                             Parallel.For(0, sitemap_urls.Length, i =>
                             {
-                                //allTasks.Add(Task.Factory.StartNew(async () =>
-                                //{
-                                //    await GetScreenShotAsync(i, client, sitemap_urls);
-                                //}).Unwrap());
-                                Func<Task> at = async () =>
-                                {
+                            //allTasks.Add(Task.Factory.StartNew(async () =>
+                            //{
+                            //    await GetScreenShotAsync(i, client, sitemap_urls);
+                            //}).Unwrap());
+                            Func<Task> at = async () =>
+                        {
                                     await GetScreenShotAsync(i, client, sitemap_urls, useJavascript);
                                 };
                                 allTasks.Add(at());
@@ -110,6 +206,7 @@ namespace CSharp7Async
                 }
             }
             sw.Stop();
+            WriteLine($"Counted to {counter} out of {toProcess} {(counter == toProcess ? "CORRECT" : "BAD BAD BAD")}");
             WriteLine($"Finishing async Main on thread {Thread.CurrentThread.ManagedThreadId} Duration {(sw.ElapsedMilliseconds / 1000f):F2} seconds ({sw.ElapsedMilliseconds} ms)");
         }
 
@@ -134,11 +231,12 @@ namespace CSharp7Async
                     using (var fileStream = File.Create($"screenshot_{i}.png"))
                     {
                         await stream.CopyToAsync(fileStream);
-                        WriteLine($"Completed screenshot {i} on thread {Thread.CurrentThread.ManagedThreadId}");
+                        counter++;
+                        WriteLine($"Completed {nameof(GetScreenShotAsync)} {i} on thread {Thread.CurrentThread.ManagedThreadId}");
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 WriteLine($"EXCEPTION {ex.GetType().Name} occured for '{sitemap_urls[i]}'\n{ex.Message}");
             }
